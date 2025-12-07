@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QAction, qApp
+import os
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QAction, qApp, QFileDialog, QTextEdit
 from PyQt5.QtGui import QIcon
 
 
@@ -9,6 +10,8 @@ class MyApp(QMainWindow):
         super().__init__()
         self.initUI()
 
+        
+
     def initUI(self):
         self.setWindowTitle('HxD Editor')
         self.setWindowIcon(QIcon('My_logo.png')) ## 어플리케이션 아이콘 설정
@@ -16,6 +19,8 @@ class MyApp(QMainWindow):
         self.center()
         self.statusBar().showMessage('HxD Editor Ready') ## 상태바 설정
 
+        self.textEdit = QTextEdit()
+        self.setCentralWidget(self.textEdit)
 
         ## menubar 생성
         menubar = self.menuBar()
@@ -28,7 +33,7 @@ class MyApp(QMainWindow):
         openAction = QAction('Open', self)
         openAction.setShortcut('Ctrl+O')
         openAction.setStatusTip('Open File')
-        openAction.triggered.connect(self.openFile)
+        openAction.triggered.connect(self.showDialog)
         filemenu.addAction(openAction)
 
         filemenu.addSeparator()
@@ -49,8 +54,15 @@ class MyApp(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
     
-    def openFile(self):
-        print("Open clicked!")
+    def showDialog(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', './')
+
+        if fname[0]:
+            f = open(fname[0], 'r')
+
+            with f:
+                data = f.read()
+                self.textEdit.setText(data)
 
     
 if __name__ == '__main__':
