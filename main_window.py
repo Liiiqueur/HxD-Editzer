@@ -10,14 +10,14 @@ from menu.file_menu import FileMenu
 from toolbar.main_toolbar import MainToolBar
 from viewer.viewer_bar import ViewerBar
 from status.status_bar import AppStatusBar
-from info.info_panel import InfoPanel   # ⚠️ 경로 맞게 수정
+from info.info_panel import InfoPanel
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("HxD Editor")
-        self.resize(1000, 600)
+        self.resize(1500, 1000)
 
         self.init_ui()
 
@@ -34,13 +34,21 @@ class MainWindow(QMainWindow):
 
         # ===== Info Panel =====
         self.info_panel = InfoPanel()
+        self.info_panel.setMinimumWidth(220)
+        self.info_panel.setMaximumWidth(350)
 
         # ===== Splitter =====
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.tabs)
         splitter.addWidget(self.info_panel)
-        splitter.setStretchFactor(0, 4)
-        splitter.setStretchFactor(1, 1)
+
+        splitter.setStretchFactor(0, 2)  # Hex
+        splitter.setStretchFactor(1, 3)  # Metadata
+
+        splitter.setCollapsible(1, True)
+
+        # 👉 초기 사이즈 명시 (중요)
+        splitter.setSizes([1200, 700])
 
         # ===== Central Widget =====
         central = QWidget()
@@ -56,6 +64,8 @@ class MainWindow(QMainWindow):
         # ===== Signals =====
         self.file_menu.new_action.triggered.connect(self.new_file)
         self.file_menu.open_action.triggered.connect(self.open_file)
+        self.file_menu.exit_action.triggered.connect(self.exit_tool)
+
 
     # ======================
     # Actions
@@ -96,4 +106,8 @@ class MainWindow(QMainWindow):
         viewer = self.tabs.widget(index)
         if viewer:
             self.info_panel.update_from_viewer(viewer)
+
+    def exit_tool(self):
+        self.close()
+
 

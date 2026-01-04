@@ -11,8 +11,10 @@ class FileMenu(QMenuBar):
         self.new_action.setStatusTip("새 파일 만들기")
         self.open_action = QAction("Open", self)
         self.open_action.setShortcut("Ctrl+O")
-        self.new_action.setStatusTip("파일 열기")
+        self.open_action.setStatusTip("파일 열기")
         self.exit_action = QAction("Exit", self)
+        self.exit_action.setShortcut("Ctrl+C")
+        self.exit_action.setStatusTip("나가기")
 
         file_menu.addAction(self.new_action)
         file_menu.addSeparator()
