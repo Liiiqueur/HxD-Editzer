@@ -104,8 +104,12 @@ class MainWindow(QMainWindow):
 
     def on_tab_changed(self, index):
         viewer = self.tabs.widget(index)
-        if viewer:
-            self.info_panel.update_from_viewer(viewer)
+        if viewer and hasattr(viewer, "get_analysis_info"):
+            info = viewer.get_analysis_info()
+            self.info_panel.update(info)
+        else:
+            self.info_panel.clear()
+
 
     def exit_tool(self):
         self.close()

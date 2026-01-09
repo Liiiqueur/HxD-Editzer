@@ -10,7 +10,6 @@ class InfoPanel(QWidget):
     def __init__(self):
         super().__init__()
 
-        # 🔹 InfoPanel 자체는 "적당히만" 커지게
         self.setSizePolicy(
             QSizePolicy.Preferred,
             QSizePolicy.Expanding
@@ -36,45 +35,44 @@ class InfoPanel(QWidget):
         self.table.setSelectionMode(QTableWidget.NoSelection)
         self.table.setFocusPolicy(Qt.NoFocus)
 
-        # 🔥 핵심: 폭을 절대 강요하지 않게
         self.table.setSizePolicy(
             QSizePolicy.Preferred,
             QSizePolicy.Expanding
         )
 
         header = self.table.horizontalHeader()
-        header.setStretchLastSection(True)      # Value 컬럼만 늘어남
+        header.setStretchLastSection(True)
         header.setSectionResizeMode(0, header.Fixed)
         header.setSectionResizeMode(1, header.Stretch)
 
-        self.table.setColumnWidth(0, 90)   # Key 고정
-        self.table.setColumnWidth(1, 200)  # Value 기본 폭
+        self.table.setColumnWidth(0, 90)
+        self.table.setColumnWidth(1, 200)
 
         layout.addWidget(self.table)
 
-    def update_from_viewer(self, viewer):
-        """
-        ViewerBar로부터 파일 메타데이터를 받아 InfoPanel에 표시
-        """
-
-        # 기존 내용 초기화
+    # =========================
+    # NEW: dict 기반 업데이트
+    # =========================
+    def update(self, info: dict):
         self.table.setRowCount(0)
 
+        if not info:
+            return
+
         # ===== 기본 정보 =====
-        info = []
+        self._add_row("File Type", info.get("file_type", "Unknown"))
+        self._add_row("File Size", f"{info.get('file_size', 0)} bytes")
 
-        # 파일 크기
-        if hasattr(viewer, "data"):
-            info.append(("File Size", f"{len(viewer.data)} bytes"))
+        # ===== 메타데이터 =====
+        metadata = info.get("metadata", {})
+        for key, value in metadata.items():
+            self._add_row(key, value)
 
-        # 파일 타입 (viewer에서 계산해둔 경우)
-        if hasattr(viewer, "file_type"):
-            info.append(("File Type", viewer.file_type))
+    def clear(self):
+        self.table.setRowCount(0)
 
-        # ===== 테이블에 추가 =====
-        for key, value in info:
-            row = self.table.rowCount()
-            self.table.insertRow(row)
-            self.table.setItem(row, 0, QTableWidgetItem(str(key)))
-            self.table.setItem(row, 1, QTableWidgetItem(str(value)))
-
+    def _add_row(self, key, value):
+        row = self.table.rowCount()
+        self.table.insertRow(row)
+        self.table.setItem(row, 0, QTableWidgetItem(str(key)))
+        self.table.setItem(row, 1, QTableWidgetItem(str(value)))

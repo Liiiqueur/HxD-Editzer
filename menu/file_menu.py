@@ -13,7 +13,7 @@ class FileMenu(QMenuBar):
         self.open_action.setShortcut("Ctrl+O")
         self.open_action.setStatusTip("파일 열기")
         self.exit_action = QAction("Exit", self)
-        self.exit_action.setShortcut("Ctrl+C")
+        self.exit_action.setShortcut("Ctrl+X")
         self.exit_action.setStatusTip("나가기")
 
         file_menu.addAction(self.new_action)
